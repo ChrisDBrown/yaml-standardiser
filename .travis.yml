@@ -1,0 +1,21 @@
+language: php
+php:
+  - 7.1
+  - 7.2
+
+env:
+  matrix:
+    - dependencies=lowest
+    - dependencies=highest
+
+install:
+  - if [ "$dependencies" = "lowest" ]; then composer update --prefer-lowest --prefer-stable --no-interaction; fi
+  - if [ "$dependencies" = "highest" ]; then composer update --no-interaction; fi
+
+script:
+  - make
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+    - tmp
