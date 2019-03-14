@@ -6,8 +6,8 @@
     ],
     "require": {
         "php": "^7.1, <7.3",
-        "symfony/console": "^4.2",
-        "symfony/yaml": "^4.2"
+        "symfony/console": "~3.4 || ~4.0",
+        "symfony/yaml": "~3.4 || ~4.0"
     },
     "require-dev": {
         "consistence/coding-standard": "~2.0",
