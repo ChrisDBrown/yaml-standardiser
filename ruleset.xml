@@ -1,4 +1,7 @@
 <?xml version="1.0"?>
 <ruleset name="YamlStandardiser">
-    <rule ref="vendor/consistence/coding-standard/Consistence/ruleset.xml" />
+    <rule ref="vendor/consistence/coding-standard/Consistence/ruleset.xml">
+        <!-- \Iterator etc. flag this rule, so disabling -->
+        <exclude name="SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName"/>
+    </rule>
 </ruleset>
