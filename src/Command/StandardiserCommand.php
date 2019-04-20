@@ -10,8 +10,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
 use YamlStandardiser\Analyser\OrderAnalyser;
 use YamlStandardiser\Result\CheckTypesInterface;
+use YamlStandardiser\Result\FileResults;
 use YamlStandardiser\Result\Result;
-use YamlStandardiser\Result\Results;
 
 class StandardiserCommand extends \Symfony\Component\Console\Command\Command
 {
@@ -34,7 +34,7 @@ class StandardiserCommand extends \Symfony\Component\Console\Command\Command
 	{
 		$filepath = strval($input->getArgument(self::ARGUMENT_FILEPATH));
 
-		$results = new Results();
+		$results = new FileResults($filepath);
 
 		$parsed = '';
 
@@ -42,7 +42,6 @@ class StandardiserCommand extends \Symfony\Component\Console\Command\Command
 			$parsed = Yaml::parseFile($filepath);
 		} catch (\Symfony\Component\Yaml\Exception\ParseException $e) {
 			$result = new Result(
-				$filepath,
 				false,
 				CheckTypesInterface::TYPE_VALID,
 				$e->getMessage()
@@ -62,7 +61,7 @@ class StandardiserCommand extends \Symfony\Component\Console\Command\Command
 		}
 
 		$analyser = new OrderAnalyser();
-		$result = $analyser->analyse($parsed, $filepath);
+		$result = $analyser->analyse($parsed);
 
 		if (!$result->wasSuccess()) {
 			$output->writeln(sprintf(

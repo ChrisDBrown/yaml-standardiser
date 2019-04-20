@@ -11,21 +11,20 @@ use YamlStandardiser\Result\Result;
 class OrderAnalyser implements \YamlStandardiser\Analyser\AnalyserInterface
 {
 
-	public function analyse(array $yaml, string $filepath): Result
+	public function analyse(array $yaml): Result
 	{
 		$sorted = $yaml;
 		ksort($sorted);
 
 		if (Yaml::dump($yaml) !== Yaml::dump($sorted)) {
 			return new Result(
-				$filepath,
 				false,
 				CheckTypesInterface::TYPE_ORDER,
 				'File did not pass order test'
 			);
 		}
 
-		return new Result($filepath, true, CheckTypesInterface::TYPE_ORDER);
+		return new Result(true, CheckTypesInterface::TYPE_ORDER);
 	}
 
 }

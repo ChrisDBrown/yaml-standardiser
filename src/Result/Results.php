@@ -7,41 +7,41 @@ namespace YamlStandardiser\Result;
 class Results implements \IteratorAggregate, \Countable
 {
 
-	private $results;
+	private $fileResults;
 
-	public function __construct(Result ...$results)
+	public function __construct(FileResults ...$fileResults)
 	{
-		$this->results = $results;
+		$this->fileResults = $fileResults;
 	}
 
 	public function getIterator(): \Iterator
 	{
-		return new \ArrayIterator($this->results);
+		return new \ArrayIterator($this->fileResults);
 	}
 
 	public function count()
 	{
-		return count($this->results);
+		return count($this->fileResults);
 	}
 
-	public function addResult(Result $result): void
+	public function addFileResults(FileResults $fileResults): void
 	{
-		$this->results[] = $result;
+		$this->fileResults[] = $fileResults;
 	}
 
-	public function first(): ?Result
+	public function first(): ?FileResults
 	{
-		if (!isset($this->results[0])) {
+		if (!isset($this->fileResults[0])) {
 			return null;
 		}
 
-		return $this->results[0];
+		return $this->fileResults[0];
 	}
 
 	public function hasErrors(): bool
 	{
-		foreach ($this->results as $result) {
-			if (!$result->wasSuccess()) {
+		foreach ($this->fileResults as $fileResult) {
+			if ($fileResult->hasErrors()) {
 				return true;
 			}
 		}
@@ -53,9 +53,9 @@ class Results implements \IteratorAggregate, \Countable
 	{
 		$errorResults = [];
 
-		foreach ($this->results as $result) {
-			if (!$result->wasSuccess()) {
-				$errorResults[] = $result;
+		foreach ($this->fileResults as $fileResult) {
+			if ($fileResult->hasErrors()) {
+				$errorResults[] = new FileResults($fileResult->getFilepath(), ...$fileResult->getErrors());
 			}
 		}
 
@@ -64,7 +64,7 @@ class Results implements \IteratorAggregate, \Countable
 
 	public function toArray(): array
 	{
-		return $this->results;
+		return $this->fileResults;
 	}
 
 }

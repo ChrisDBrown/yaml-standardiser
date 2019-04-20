@@ -7,8 +7,6 @@ namespace YamlStandardiser\Result;
 final class Result
 {
 
-	private $filepath;
-
 	private $wasSuccess;
 
 	private $checkType;
@@ -18,23 +16,16 @@ final class Result
 	private $isAutoFixable;
 
 	public function __construct(
-		string $filepath,
 		bool $wasSuccess,
 		string $checkType,
 		string $message = '',
 		bool $isAutoFixable = false
 	)
 	{
-		$this->filepath = $filepath;
 		$this->wasSuccess = $wasSuccess;
 		$this->setCheckType($checkType);
 		$this->message = $message;
 		$this->isAutoFixable = $isAutoFixable;
-	}
-
-	public function getFilepath(): string
-	{
-		return $this->filepath;
 	}
 
 	public function wasSuccess(): bool
