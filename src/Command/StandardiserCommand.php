@@ -55,7 +55,7 @@ class StandardiserCommand extends \Symfony\Component\Console\Command\Command
 		 * TODO: Don't just blow up here once this is handling multiple files
 		 */
 		if ($results->hasErrors()) {
-			var_dump($results->first());
+			var_dump($results);
 
 			return 1;
 		}
@@ -64,20 +64,14 @@ class StandardiserCommand extends \Symfony\Component\Console\Command\Command
 		$result = $analyser->analyse($parsed);
 
 		if (!$result->wasSuccess()) {
-			$output->writeln(sprintf(
-				'<error>Failure: %s</error>',
-				$result->getMessage()
-			));
+			var_dump($results);
 
 			return 1;
 		}
 
 		/**
 		 * TODO: Create analyser collection service, register all analysers against it and run them
-		 * Should create a result collection and add each result returned from the analyser to it
-		 * Result collection should have an overall pass/fail status and only accept result objects
 		 */
-
 		$output->writeln('<info>Complete</info>');
 
 		return 0;

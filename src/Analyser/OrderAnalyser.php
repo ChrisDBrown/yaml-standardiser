@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 namespace YamlStandardiser\Analyser;
 
-use Symfony\Component\Yaml\Yaml;
 use YamlStandardiser\Result\CheckTypesInterface;
 use YamlStandardiser\Result\Result;
 
@@ -16,11 +15,13 @@ class OrderAnalyser implements \YamlStandardiser\Analyser\AnalyserInterface
 		$sorted = $yaml;
 		ksort($sorted);
 
-		if (Yaml::dump($yaml) !== Yaml::dump($sorted)) {
+		$unsortedKeys = array_keys($yaml);
+		$sortedKeys = array_keys($sorted);
+		if ($unsortedKeys !== $sortedKeys) {
 			return new Result(
 				false,
 				CheckTypesInterface::TYPE_ORDER,
-				'File did not pass order test'
+				'Top level keys are not ordered alphabetically.'
 			);
 		}
 
