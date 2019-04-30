@@ -13,6 +13,7 @@ Use `--dry-run=1` to show errors without editing the file
 
 ### Todo
 
+- prioritise certain keys in ordering
 - multi-file support
 - multi-level key alphabetisation
 - indentation
