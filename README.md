@@ -3,18 +3,18 @@ Apply some basic standards to your yaml files
 
 Add to your project with `composer require --dev chrisdbrown/yaml-standardiser`
 
-Run with `vendor/bin/yaml-standardiser file-to-edit.yaml`
+Run with `vendor/bin/yaml-standardiser file-to-edit.yaml file2.yaml`
 
-Use `--dry-run=1` to show errors without editing the file
+Passing a directory will analyse all files with `.yml` or `.yaml` extensions in that directory and any subdirectories
 
 ### Currently implemented
 
 - top level key alphabetisation on single file
+- multi-file support
 
 ### Todo
 
 - prioritise certain keys in ordering
-- multi-file support
 - multi-level key alphabetisation
 - indentation
 - spacing between key blocks
