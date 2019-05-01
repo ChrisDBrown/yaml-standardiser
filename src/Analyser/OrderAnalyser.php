@@ -73,7 +73,7 @@ class OrderAnalyser implements \YamlStandardiser\Analyser\AnalyserInterface
 		$beginsWithUnderscore = array_filter(
 			$array,
 			function ($key) {
-				return strpos($key, '_') === 0;
+				return strpos(strval($key), '_') === 0;
 			},
 			ARRAY_FILTER_USE_KEY
 		);
@@ -81,7 +81,7 @@ class OrderAnalyser implements \YamlStandardiser\Analyser\AnalyserInterface
 		$theRest = array_filter(
 			$array,
 			function ($key) {
-				return strpos($key, '_') !== 0;
+				return strpos(strval($key), '_') !== 0;
 			},
 			ARRAY_FILTER_USE_KEY
 		);
