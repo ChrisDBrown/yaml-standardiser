@@ -20,13 +20,15 @@ class FileFinder
 			} else {
 				$finder = new Finder();
 				$finder->followLinks();
-				foreach ($finder->files()->name('*.{yml,yaml}')->in($path) as $fileInfo) {
+				foreach ($finder->files()->name('*.{yml,yaml}')->sortByName()->in($path) as $fileInfo) {
 					$files[] = $fileInfo->getPathname();
 				}
 			}
 		}
 
-		return $files;
+		sort($files);
+
+		return array_unique($files);
 	}
 
 }
