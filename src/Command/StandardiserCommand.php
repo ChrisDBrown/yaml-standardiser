@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
 use YamlStandardiser\Analyser\OrderAnalyser;
+use YamlStandardiser\Config\Config;
 use YamlStandardiser\Helper\FileFinder;
 use YamlStandardiser\Helper\OutputStyle;
 use YamlStandardiser\Result\CheckTypesInterface;
@@ -38,6 +39,11 @@ class StandardiserCommand extends \Symfony\Component\Console\Command\Command
 		$filepaths = $input->getArgument(self::ARGUMENT_FILEPATHS);
 		$outputHelper = new OutputStyle($input, $output);
 
+		/**
+		 * TODO: Allow config file to be passed in, and merge with defaults
+		 */
+		$config = new Config();
+
 		if (!is_array($filepaths) || count($filepaths) === 0) {
 			$outputHelper->error('No filepaths passed to command');
 
@@ -62,7 +68,8 @@ class StandardiserCommand extends \Symfony\Component\Console\Command\Command
 			$parsed = '';
 
 			try {
-				$parsed = Yaml::parseFile($file, Yaml::PARSE_CUSTOM_TAGS | Yaml::PARSE_CONSTANT);
+				// empty files will parse to NULL, so casting to array to defend against this
+				$parsed = Yaml::parseFile($file, Yaml::PARSE_CUSTOM_TAGS | Yaml::PARSE_CONSTANT) ?? [];
 			} catch (\Symfony\Component\Yaml\Exception\ParseException $e) {
 				$fileResults->addResult(new Result(
 					false,
@@ -76,7 +83,7 @@ class StandardiserCommand extends \Symfony\Component\Console\Command\Command
 				continue;
 			}
 
-			$analyser = new OrderAnalyser();
+			$analyser = new OrderAnalyser($config);
 			$fileResults->addResult($analyser->analyse($parsed));
 
 			$results->addFileResults($fileResults);

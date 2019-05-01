@@ -19,7 +19,7 @@ class Config
 
 	public function getKeyAlphabetisationDepth(): int
 	{
-		return 2;
+		return 1;
 	}
 
 	public function getPrioritisedTopLevelKeys(): array
