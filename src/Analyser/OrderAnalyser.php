@@ -108,6 +108,10 @@ class OrderAnalyser implements \YamlStandardiser\Analyser\AnalyserInterface
 			ARRAY_FILTER_USE_KEY
 		);
 
+		if (count($keyInPrioritisedArray)) {
+			return $yaml;
+		}
+
 		$theRest = array_filter(
 			$yaml,
 			function ($key) use ($prioritisedKeys) {
@@ -118,7 +122,9 @@ class OrderAnalyser implements \YamlStandardiser\Analyser\AnalyserInterface
 
 		$ordered = [];
 		foreach ($prioritisedKeys as $prioritisedKey) {
-			$ordered[$prioritisedKey] = $keyInPrioritisedArray[$prioritisedKey];
+			if (isset($keyInPrioritisedArray[$prioritisedKey])) {
+				$ordered[$prioritisedKey] = $keyInPrioritisedArray[$prioritisedKey];
+			}
 		}
 
 		return array_merge($ordered, $theRest);
