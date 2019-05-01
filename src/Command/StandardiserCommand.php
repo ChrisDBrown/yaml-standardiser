@@ -9,8 +9,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
 use YamlStandardiser\Analyser\OrderAnalyser;
-use YamlStandardiser\Helper\FileFinderHelper;
-use YamlStandardiser\Helper\OutputHelper;
+use YamlStandardiser\Helper\FileFinder;
+use YamlStandardiser\Helper\OutputStyle;
 use YamlStandardiser\Result\CheckTypesInterface;
 use YamlStandardiser\Result\FileResults;
 use YamlStandardiser\Result\Result;
@@ -36,7 +36,7 @@ class StandardiserCommand extends \Symfony\Component\Console\Command\Command
 	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
 		$filepaths = $input->getArgument(self::ARGUMENT_FILEPATHS);
-		$outputHelper = new OutputHelper($input, $output);
+		$outputHelper = new OutputStyle($input, $output);
 
 		if (!is_array($filepaths) || count($filepaths) === 0) {
 			$outputHelper->error('No filepaths passed to command');
@@ -44,7 +44,7 @@ class StandardiserCommand extends \Symfony\Component\Console\Command\Command
 			return 1;
 		}
 
-		$fileFinder = new FileFinderHelper();
+		$fileFinder = new FileFinder();
 		$matchingFiles = $fileFinder->findFilesForPaths($filepaths);
 
 		if (count($matchingFiles) === 0) {
@@ -54,6 +54,7 @@ class StandardiserCommand extends \Symfony\Component\Console\Command\Command
 		}
 
 		$results = new Results();
+		$outputHelper->progressStart(count($matchingFiles));
 
 		foreach ($matchingFiles as $file) {
 			$fileResults = new FileResults($file);
@@ -61,7 +62,7 @@ class StandardiserCommand extends \Symfony\Component\Console\Command\Command
 			$parsed = '';
 
 			try {
-				$parsed = Yaml::parseFile($file);
+				$parsed = Yaml::parseFile($file, Yaml::PARSE_CUSTOM_TAGS | Yaml::PARSE_CONSTANT);
 			} catch (\Symfony\Component\Yaml\Exception\ParseException $e) {
 				$fileResults->addResult(new Result(
 					false,
@@ -70,6 +71,7 @@ class StandardiserCommand extends \Symfony\Component\Console\Command\Command
 				));
 
 				$results->addFileResults($fileResults);
+				$outputHelper->progressAdvance();
 
 				continue;
 			}
@@ -78,8 +80,10 @@ class StandardiserCommand extends \Symfony\Component\Console\Command\Command
 			$fileResults->addResult($analyser->analyse($parsed));
 
 			$results->addFileResults($fileResults);
+			$outputHelper->progressAdvance();
 		}
 
+		$outputHelper->progressFinish();
 		$outputHelper->printResults($results);
 
 		if ($results->hasErrors()) {
