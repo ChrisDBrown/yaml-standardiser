@@ -10,6 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
 use YamlStandardiser\Analyser\OrderAnalyser;
 use YamlStandardiser\Helper\FileFinderHelper;
+use YamlStandardiser\Helper\OutputHelper;
 use YamlStandardiser\Result\CheckTypesInterface;
 use YamlStandardiser\Result\FileResults;
 use YamlStandardiser\Result\Result;
@@ -35,9 +36,10 @@ class StandardiserCommand extends \Symfony\Component\Console\Command\Command
 	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
 		$filepaths = $input->getArgument(self::ARGUMENT_FILEPATHS);
+		$outputHelper = new OutputHelper($input, $output);
 
 		if (!is_array($filepaths) || count($filepaths) === 0) {
-			$output->writeln('Gonna need some filepaths before this works');
+			$outputHelper->error('No filepaths passed to command');
 
 			return 1;
 		}
@@ -46,7 +48,7 @@ class StandardiserCommand extends \Symfony\Component\Console\Command\Command
 		$matchingFiles = $fileFinder->findFilesForPaths($filepaths);
 
 		if (count($matchingFiles) === 0) {
-			$output->writeln('No files found for filepaths given');
+			$outputHelper->error('No files found for filepaths given');
 
 			return 1;
 		}
@@ -78,13 +80,11 @@ class StandardiserCommand extends \Symfony\Component\Console\Command\Command
 			$results->addFileResults($fileResults);
 		}
 
-		if ($results->hasErrors()) {
-			var_dump($results->getErrors());
+		$outputHelper->printResults($results);
 
+		if ($results->hasErrors()) {
 			return 1;
 		}
-
-		$output->writeln('<info>Complete</info>');
 
 		return 0;
 	}
