@@ -6,7 +6,7 @@ namespace YamlStandardiser\Helper;
 
 use Symfony\Component\Finder\Finder;
 
-class FileFinderHelper
+class FileFinder
 {
 
 	public function findFilesForPaths(array $paths): array
